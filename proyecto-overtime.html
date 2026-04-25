@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard de Estadísticas - Overtime Basquet · Leonardo J. Calabresi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f0f;
+      --bg2: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #e8e8e8;
+      --muted: #888;
+      --accent: #c8a96e;
+      --accent2: #7eb8c8;
+      --font: 'Inter', sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15,15,15,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo { font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; text-decoration: none; color: var(--text); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* BACK LINK */
+    .back { max-width: 900px; margin: 2.5rem auto 0; padding: 0 2rem; }
+    .back a { color: var(--muted); text-decoration: none; font-size: 0.875rem; display: inline-flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+    .back a:hover { color: var(--text); }
+
+    /* HERO */
+    .hero {
+      max-width: 900px; margin: 2rem auto 0; padding: 3rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .project-tag {
+      display: inline-block;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent);
+      background: rgba(200,169,110,0.1);
+      border: 1px solid rgba(200,169,110,0.3);
+      padding: 0.25rem 0.75rem; border-radius: 2rem;
+      margin-bottom: 1.25rem;
+    }
+    h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; margin-bottom: 1rem; }
+    .hero-lead { font-size: 1.1rem; color: var(--muted); max-width: 650px; }
+
+    /* META ROW */
+    .meta-row {
+      max-width: 900px; margin: 0 auto; padding: 2rem 2rem;
+      display: flex; flex-wrap: wrap; gap: 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 0.25rem; }
+    .meta-label { font-size: 0.7rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+    .meta-value { font-size: 0.9rem; color: var(--text); }
+    .tech-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.25rem; }
+    .chip {
+      font-size: 0.75rem; font-weight: 500;
+      padding: 0.2rem 0.6rem; border-radius: 0.25rem;
+      background: var(--bg2); border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* LINKS */
+    .links-row {
+      max-width: 900px; margin: 0 auto; padding: 1.75rem 2rem;
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.25rem; border-radius: 0.4rem;
+      font-size: 0.875rem; font-weight: 500; text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #0f0f0f; }
+    .btn-primary:hover { background: #d4b87a; }
+    .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--muted); }
+
+    /* CONTENT */
+    .content { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+
+    .section { margin-bottom: 3rem; }
+    .section h2 {
+      font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em;
+      margin-bottom: 1.25rem; padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section p { color: #ccc; margin-bottom: 1rem; font-size: 0.95rem; }
+
+    /* CHALLENGES */
+    .challenges { display: flex; flex-direction: column; gap: 1rem; }
+    .challenge-item {
+      display: grid; grid-template-columns: 2rem 1fr;
+      gap: 0.75rem; align-items: start;
+      padding: 1.25rem; background: var(--bg2); border: 1px solid var(--border); border-radius: 0.5rem;
+    }
+    .challenge-num {
+      font-size: 0.75rem; font-weight: 700; color: var(--accent);
+      width: 2rem; height: 2rem; border-radius: 50%;
+      background: rgba(200,169,110,0.1); border: 1px solid rgba(200,169,110,0.3);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .challenge-text strong { display: block; font-size: 0.9rem; margin-bottom: 0.3rem; }
+    .challenge-text p { font-size: 0.875rem; color: var(--muted); margin: 0; }
+
+    /* SCREENSHOTS */
+    .screenshots { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .screenshots { grid-template-columns: 1fr; } }
+    .screenshot-card {
+      border: 1px solid var(--border); border-radius: 0.5rem; overflow: hidden;
+      background: var(--bg2);
+    }
+    .screenshot-placeholder {
+      height: 200px; background: var(--bg2);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--muted); font-size: 0.8rem; gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .screenshot-caption { padding: 0.75rem 1rem; font-size: 0.8rem; color: var(--muted); }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.8rem; color: var(--muted);
+    }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .hero, .meta-row, .links-row, .content, .back { padding-left: 1rem; padding-right: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Leonardo J. Calabresi</a>
+  <ul class="nav-links">
+    <li><a href="index.html#sobre">Sobre mí</a></li>
+    <li><a href="proyectos.html">Proyectos</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="cv.html">CV</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<div class="back">
+  <a href="proyectos.html">← Volver a Proyectos</a>
+</div>
+
+<header class="hero">
+  <div class="project-tag">Datos · Deportes</div>
+  <h1>Dashboard de Estadísticas<br>Overtime Basquet</h1>
+  <p class="hero-lead">
+    Dashboard interactivo de estadísticas para una liga de básquet amateur argentina, construido con scraping, limpieza de datos y visualización en Tableau.
+  </p>
+</header>
+
+<div class="meta-row">
+  <div class="meta-item">
+    <span class="meta-label">Año</span>
+    <span class="meta-value">2025 – 2026</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Área</span>
+    <span class="meta-value">Data · Deportes</span>
+  </div>
+  <div class="meta-item">
+    <span class="meta-label">Tecnologías</span>
+    <div class="tech-chips">
+      <span class="chip">Python</span>
+      <span class="chip">Selenium</span>
+      <span class="chip">BeautifulSoup</span>
+      <span class="chip">Pandas</span>
+      <span class="chip">JSON</span>
+      <span class="chip">Tableau</span>
+    </div>
+  </div>
+</div>
+
+<div class="links-row">
+  <a class="btn btn-primary" href="https://public.tableau.com/views/OvertimeDashboard_17763934140840/Historia1?:language=es-ES&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link" target="_blank">
+    Ver Dashboard →
+  </a>
+  <a class="btn btn-secondary" href="https://github.com/LeonardoCalabresi/Overtime/" target="_blank">
+    Ver código en GitHub
+  </a>
+</div>
+
+<main class="content">
+
+  <section class="section">
+    <h2>Descripción del proyecto</h2>
+    <p>
+      <a href="https://www.overtimebasquet.com/" target="_blank" style="color: var(--accent2); text-decoration: none;">Overtime Basquet</a> es una liga de básquet amateur argentina. Este proyecto construye un pipeline completo de datos: desde la extracción automatizada del sitio web de la liga hasta un dashboard interactivo en Tableau que permite explorar estadísticas de jugadores, equipos y partidos.
+    </p>
+    <p>
+      El dashboard incluye rankings dinámicos por métrica (puntos, rebotes, asistencias, etc.), filtros por categoría y torneo, estadísticas por partido, y un sistema de antiranking con premios informales para los resultados más llamativos de cada fecha.
+    </p>
+  </section>
+
+  <section class="section">
+    <h2>Principales desafíos</h2>
+    <div class="challenges">
+      <div class="challenge-item">
+        <div class="challenge-num">1</div>
+        <div class="challenge-text">
+          <strong>Extracción de datos</strong>
+          <p>El sitio de la liga tiene arbitrariedades en su estructura y no dispone de una API ni base de datos pública. Se utilizó Selenium para navegar dinámicamente y BeautifulSoup para parsear el HTML.</p>
+        </div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-num">2</div>
+        <div class="challenge-text">
+          <strong>Limpieza y deduplicación</strong>
+          <p>Los nombres de jugadores presentan variaciones mínimas de escritura entre partidos, generando duplicados. La normalización de nombres es un trabajo en progreso continuo con Pandas.</p>
+        </div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-num">3</div>
+        <div class="challenge-text">
+          <strong>Rankings dinámicos en Tableau</strong>
+          <p>Tableau tiene limitaciones para construir rankings que respondan a múltiples filtros simultáneos. Se requirieron cálculos de tabla y campos calculados avanzados para lograr el comportamiento deseado.</p>
+        </div>
+      </div>
+      <div class="challenge-item">
+        <div class="challenge-num">4</div>
+        <div class="challenge-text">
+          <strong>Imágenes de jugadores y equipos</strong>
+          <p>Las imágenes en el sitio fuente no están asociadas fijamente a cada jugador o equipo, sino que se repiten por partido. Fue necesario un mapeo adicional para asignar correctamente cada imagen.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Capturas del dashboard</h2>
+    <div class="screenshots">
+      <!-- CAPTURA 1: reemplazá la línea de abajo con una etiqueta <img> cuando tengas las imágenes subidas -->
+      <!-- <img src="img/overtime-ranking.png" alt="Ranking de jugadores" style="width:100%"> -->
+      <div class="screenshot-card">
+        <div class="screenshot-placeholder">
+          <span>📊</span>
+          <span>Ranking de Jugadores</span>
+          <!-- Para agregar imagen: reemplazá este div por <img src="img/overtime-1.png" alt="..." style="width:100%"> -->
+        </div>
+        <div class="screenshot-caption">Ranking dinámico por métrica, categoría y torneo</div>
+      </div>
+      <div class="screenshot-card">
+        <div class="screenshot-placeholder">
+          <span>🏀</span>
+          <span>Partidos / Antiranking</span>
+          <!-- Para agregar imagen: reemplazá este div por <img src="img/overtime-2.png" alt="..." style="width:100%"> -->
+        </div>
+        <div class="screenshot-caption">Estadísticas por partido y premios informales por fecha</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PRÓXIMOS PASOS / ESTADO DEL PROYECTO
+       Editá esta sección para mantenerla actualizada
+  ============================================================ -->
+  <section class="section">
+    <h2>Estado y próximos pasos</h2>
+    <p>El dashboard está activo y se actualiza con cada fecha de la liga. La limpieza de nombres de jugadores continúa siendo el principal trabajo pendiente. Como próximo paso se planea automatizar la actualización de datos con un script programado.</p>
+  </section>
+
+</main>
+
+<footer>
+  Leonardo J. Calabresi · <a href="index.html" style="color: var(--muted); text-decoration: none;">Volver al inicio</a>
+</footer>
+
+</body>
+</html>

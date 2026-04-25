@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CV · Leonardo J. Calabresi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0f0f0f;
+      --bg2: #1a1a1a;
+      --border: #2a2a2a;
+      --text: #e8e8e8;
+      --muted: #888;
+      --accent: #c8a96e;
+      --accent2: #7eb8c8;
+      --font: 'Inter', sans-serif;
+    }
+
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.7; }
+
+    /* NAV */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(15,15,15,0.95); backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; align-items: center; justify-content: space-between; height: 64px;
+    }
+    .nav-logo { font-weight: 700; font-size: 1rem; letter-spacing: -0.02em; text-decoration: none; color: var(--text); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.875rem; transition: color 0.2s; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+    /* LAYOUT */
+    .page { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+
+    /* HEADER */
+    .cv-header { margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1.5rem; }
+    .cv-header h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1.2; }
+    .cv-header .subtitle { font-size: 0.875rem; color: var(--accent); font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.4rem; }
+    .cv-contact { display: flex; flex-direction: column; gap: 0.4rem; text-align: right; }
+    .cv-contact a, .cv-contact span { font-size: 0.85rem; color: var(--muted); text-decoration: none; }
+    .cv-contact a:hover { color: var(--accent2); }
+    .btn-download {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.25rem; border-radius: 0.4rem;
+      font-size: 0.875rem; font-weight: 500; text-decoration: none;
+      background: var(--accent); color: #0f0f0f; transition: background 0.2s;
+      margin-top: 0.75rem;
+    }
+    .btn-download:hover { background: #d4b87a; }
+
+    /* SECTIONS */
+    .cv-section { margin-bottom: 2.75rem; }
+    .cv-section h2 {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1.25rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border);
+    }
+
+    /* PROFILE */
+    .profile-text { font-size: 0.95rem; color: #ccc; }
+
+    /* EXPERIENCE */
+    .exp-list { display: flex; flex-direction: column; gap: 1.75rem; }
+    .exp-item { display: grid; grid-template-columns: 1fr auto; gap: 0.25rem 1.5rem; }
+    .exp-title { font-size: 0.95rem; font-weight: 600; color: var(--text); grid-column: 1; }
+    .exp-period { font-size: 0.8rem; color: var(--muted); white-space: nowrap; grid-column: 2; grid-row: 1 / 3; align-self: start; text-align: right; padding-top: 0.1rem; }
+    .exp-company { font-size: 0.85rem; color: var(--accent2); grid-column: 1; }
+    .exp-desc { font-size: 0.85rem; color: var(--muted); grid-column: 1 / 3; margin-top: 0.5rem; }
+    .exp-bullets { list-style: none; margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.3rem; grid-column: 1 / 3; }
+    .exp-bullets li { font-size: 0.85rem; color: var(--muted); padding-left: 1rem; position: relative; }
+    .exp-bullets li::before { content: '·'; position: absolute; left: 0; color: var(--accent); }
+
+    /* EDUCATION */
+    .edu-list { display: flex; flex-direction: column; gap: 1.25rem; }
+    .edu-item { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem; }
+    .edu-degree { font-size: 0.9rem; font-weight: 600; }
+    .edu-year { font-size: 0.8rem; color: var(--muted); }
+    .edu-institution { font-size: 0.85rem; color: var(--muted); grid-column: 1 / 3; }
+
+    /* SKILLS */
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .skill-chip {
+      font-size: 0.8rem; padding: 0.3rem 0.75rem; border-radius: 0.25rem;
+      background: var(--bg2); border: 1px solid var(--border); color: var(--text);
+    }
+    .skill-chip.highlight { border-color: rgba(200,169,110,0.4); color: var(--accent); background: rgba(200,169,110,0.07); }
+
+    /* FOOTER */
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.8rem; color: var(--muted); }
+
+    @media (max-width: 600px) {
+      nav { padding: 0 1rem; }
+      .page { padding: 2rem 1rem; }
+      .cv-header { flex-direction: column; }
+      .cv-contact { text-align: left; }
+      .exp-item { grid-template-columns: 1fr; }
+      .exp-period { grid-column: 1; grid-row: auto; text-align: left; }
+      .exp-bullets { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Leonardo J. Calabresi</a>
+  <ul class="nav-links">
+    <li><a href="index.html#sobre">Sobre mí</a></li>
+    <li><a href="proyectos.html">Proyectos</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="cv.html" class="active">CV</a></li>
+    <li><a href="index.html#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<main class="page">
+
+  <!-- ============================================================
+       ENCABEZADO — editá nombre, cargo y datos de contacto
+  ============================================================ -->
+  <div class="cv-header">
+    <div>
+      <h1>Leonardo J. Calabresi</h1>
+      <div class="subtitle">Economist · Decision Analyst</div>
+    </div>
+    <div class="cv-contact">
+      <span>Buenos Aires, AR</span>
+      <a href="tel:+541124660188">(+54) 1124660188</a>
+      <a href="mailto:calabresileonardo@gmail.com">calabresileonardo@gmail.com</a>
+      <!-- Para agregar link al PDF: descomentá la línea de abajo y poné la ruta al PDF en GitHub -->
+      <!-- <a class="btn-download" href="cv/CV_Leonardo_Calabresi.pdf" target="_blank">Descargar PDF ↓</a> -->
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PERFIL — editá el texto de presentación
+  ============================================================ -->
+  <section class="cv-section">
+    <h2>Perfil</h2>
+    <p class="profile-text">
+      Economista con 15 años de trayectoria en el sector energético (petróleo, gas, energías renovables, CCS, downstream). Busco siempre el panorama general, los objetivos y la propuesta de valor detrás de los números. Colaborativo, metódico y orientado a resultados, con experiencia en proyectos de alto impacto a nivel global.
+    </p>
+  </section>
+
+  <!-- ============================================================
+       EXPERIENCIA — para agregar un rol, duplicá un bloque .exp-item
+  ============================================================ -->
+  <section class="cv-section">
+    <h2>Experiencia</h2>
+    <div class="exp-list">
+
+      <div class="exp-item">
+        <div class="exp-title">NOV Finance Advisor</div>
+        <div class="exp-period">Ene 2026 – actualidad</div>
+        <div class="exp-company">Shell Argentina S.A. · Buenos Aires, Argentina</div>
+        <ul class="exp-bullets">
+          <li>Asesoramiento financiero para bloques no operados en la Cuenca Vaca Muerta.</li>
+          <li>Financiamiento de operaciones corrientes, control de gastos y gestión de proyectos de ahorro.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-title">Global Economist & Decision Analyst – Chemicals and Products</div>
+        <div class="exp-period">Jun 2023 – Dic 2025</div>
+        <div class="exp-company">Shell Europe · Den Haag / Rotterdam, NL</div>
+        <ul class="exp-bullets">
+          <li>Economía y análisis de decisión para proyectos de CCS, Hidrógeno y Downstream. Más de 10 proyectos de +50MM USD en Noruega, EE.UU., China, Alemania, Reino Unido y Países Bajos.</li>
+          <li>Post-investment reviews de proyectos clave en Europa.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-title">Country Economist</div>
+        <div class="exp-period">Oct 2019 – May 2023</div>
+        <div class="exp-company">Shell Argentina S.A. · Buenos Aires, Argentina</div>
+        <ul class="exp-bullets">
+          <li>Valuación del activo Vaca Muerta para planning anual (+500MM USD capex/año).</li>
+          <li>Evaluación económica de proyectos (+50MM USD): instalaciones de producción, electrificación, energía verde, abatimiento de GHG, otorgamiento de licencias.</li>
+          <li>Soporte local para oportunidades de M&A en América Latina.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-title">JV Representative – Commercial and Land</div>
+        <div class="exp-period">Oct 2017 – Sep 2019</div>
+        <div class="exp-company">Shell Argentina S.A. · Buenos Aires, Argentina</div>
+        <ul class="exp-bullets">
+          <li>Representante JV: liderazgo del proceso de aprobación de Work Program and Budget. Conducción de reuniones OCM y TCM en bloques SOV.</li>
+          <li>Negociación con autoridades locales: 2 permisos de explotación otorgados/extendidos.</li>
+          <li>Más de 10 acuerdos de servidumbre y arriendo firmados y gestionados en bloques de Vaca Muerta.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-title">Project Economist Lead</div>
+        <div class="exp-period">Abr 2017 – Sep 2017</div>
+        <div class="exp-company">MSU Power S.A. · Buenos Aires, Argentina</div>
+        <ul class="exp-bullets">
+          <li>Evaluación económica y financiera para emisión de obligaciones negociables. La compañía obtuvo 650MM USD de inversores estadounidenses para construir tres centrales térmicas y un parque eólico.</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-title">Otros roles</div>
+        <div class="exp-period">Feb 2008 – Mar 2017</div>
+        <div class="exp-company">Sector energético</div>
+        <ul class="exp-bullets">
+          <li>Más de 3 roles en el sector eléctrico en áreas Comercial y Economía.</li>
+          <li>1 año como consultor de la ONU en estimación de inventarios de GHG.</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FORMACIÓN — para agregar un título, duplicá un bloque .edu-item
+  ============================================================ -->
+  <section class="cv-section">
+    <h2>Formación</h2>
+    <div class="edu-list">
+
+      <div class="edu-item">
+        <div class="edu-degree">Sustainable Finance</div>
+        <div class="edu-year">2025</div>
+        <div class="edu-institution">University of Cambridge</div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-degree">Master en Finanzas</div>
+        <div class="edu-year">2013 – 2014</div>
+        <div class="edu-institution">UNR</div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-degree">Especialización en Mercado de Energía Eléctrica y Gas</div>
+        <div class="edu-year">2012 – 2013</div>
+        <div class="edu-institution">ITBA</div>
+      </div>
+
+      <div class="edu-item">
+        <div class="edu-degree">Licenciado en Economía</div>
+        <div class="edu-year">2005 – 2011</div>
+        <div class="edu-institution">UBA</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SKILLS — agregá o quitá chips según corresponda
+  ============================================================ -->
+  <section class="cv-section">
+    <h2>Habilidades</h2>
+    <div class="skills-grid">
+      <span class="skill-chip highlight">Python</span>
+      <span class="skill-chip highlight">Tableau</span>
+      <span class="skill-chip highlight">Pandas</span>
+      <span class="skill-chip">Planificación estratégica</span>
+      <span class="skill-chip">Modelado financiero</span>
+      <span class="skill-chip">Análisis de decisiones</span>
+      <span class="skill-chip">Economía energética</span>
+      <span class="skill-chip">M&A</span>
+      <span class="skill-chip">Negociación</span>
+      <span class="skill-chip">Comunicación ejecutiva</span>
+      <span class="skill-chip">Español (nativo)</span>
+      <span class="skill-chip">Inglés (avanzado)</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  Leonardo J. Calabresi · <a href="index.html" style="color: var(--muted); text-decoration: none;">Volver al inicio</a>
+</footer>
+
+</body>
+</html>
