@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard KPIs</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+  <h1>Dashboard KPIs</h1>
+
+  <label for="dropdown-nivel">Selecciona nivel:</label>
+  <select id="dropdown-nivel">
+    <option value="equipo">Equipo</option>
+    <option value="jugador">Jugador</option>
+  </select>
+
+  <label for="dropdown-vista">Selecciona vista:</label>
+  <select id="dropdown-vista">
+    <option value="partido">Por partido</option>
+    <option value="global">Global acumulado</option>
+  </select>
+
+  <label for="dropdown-partido">Selecciona partido:</label>
+  <select id="dropdown-partido"></select>
+
+  <label for="dropdown-metrica">Selecciona métrica:</label>
+  <select id="dropdown-metrica"></select>
+
+  <div id="grafico-ranking"></div>
+
+  <script>
+    let datos = {
+      equipo: {partido: [], global: []},
+      jugador: {partido: [], global: []}
+    };
+    let nivelActual = "equipo";
+    let vistaActual = "partido";
+
+    Promise.all([
+      fetch("indicadores_por_equipo.json").then(r => r.json()),
+      fetch("indicadores_equipo_global.json").then(r => r.json()),
+      fetch("indicadores_por_jugador.json").then(r => r.json()),
+      fetch("indicadores_jugador_global.json").then(r => r.json())
+    ]).then(([equipoPartido, equipoGlobal, jugadorPartido, jugadorGlobal]) => {
+      datos.equipo.partido = equipoPartido;
+      datos.equipo.global = equipoGlobal;
+      datos.jugador.partido = jugadorPartido;
+      datos.jugador.global = jugadorGlobal;
+
+      const dpNivel = document.getElementById("dropdown-nivel");
+      const dpVista = document.getElementById("dropdown-vista");
+      const dpPartido = document.getElementById("dropdown-partido");
+      const dpMetrica = document.getElementById("dropdown-metrica");
+
+      function actualizarDropdowns() {
+        dpPartido.innerHTML = "";
+        dpMetrica.innerHTML = "";
+
+        const dataset = datos[nivelActual][vistaActual];
+        if (dataset.length === 0) return;
+
+        // métricas disponibles
+        const metricas = Object.keys(dataset[0]).filter(k => !["match_id","team","player"].includes(k));
+        metricas.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m;
+          opt.textContent = m;
+          dpMetrica.appendChild(opt);
+        });
+        dpMetrica.value = metricas[0];
+
+        // partidos solo si vista=partido
+        if (vistaActual === "partido") {
+          const partidos = [...new Set(dataset.map(d => String(d.match_id)))];
+          partidos.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p;
+            opt.textContent = p;
+            dpPartido.appendChild(opt);
+          });
+          if (partidos.length > 0) dpPartido.value = partidos[0];
+          dpPartido.style.display = "inline";
+        } else {
+          dpPartido.style.display = "none";
+        }
+      }
+
+      function actualizarGrafico() {
+        const dataset = datos[nivelActual][vistaActual];
+        if (dataset.length === 0) {
+          document.getElementById("grafico-ranking").innerHTML = "<p>No hay datos.</p>";
+          return;
+        }
+
+        const metrica = dpMetrica.value;
+        let datosFiltrados = [];
+
+        if (vistaActual === "partido") {
+          const partido = dpPartido.value;
+          datosFiltrados = dataset.filter(d => String(d.match_id) === partido);
+        } else {
+          datosFiltrados = dataset;
+        }
+
+        const ordenados = datosFiltrados.sort((a,b) => b[metrica] - a[metrica]);
+
+        const ejeX = nivelActual === "equipo"
+          ? ordenados.map(d => d.team)
+          : ordenados.map(d => d.player + " (" + d.team + ")");
+
+        const trace = {
+          x: ejeX,
+          y: ordenados.map(d => d[metrica]),
+          type: 'bar',
+          marker: {color: 'steelblue'}
+        };
+
+        const layout = {
+          title: vistaActual === "partido"
+            ? `${nivelActual} - Partido ${dpPartido.value} - ${metrica}`
+            : `${nivelActual} - Global acumulado - ${metrica}`,
+          xaxis: {title: nivelActual === "equipo" ? 'Equipo' : 'Jugador'},
+          yaxis: {title: metrica}
+        };
+
+        Plotly.newPlot('grafico-ranking', [trace], layout);
+      }
+
+      dpNivel.addEventListener("change", () => {
+        nivelActual = dpNivel.value;
+        actualizarDropdowns();
+        actualizarGrafico();
+      });
+      dpVista.addEventListener("change", () => {
+        vistaActual = dpVista.value;
+        actualizarDropdowns();
+        actualizarGrafico();
+      });
+      dpPartido.addEventListener("change", actualizarGrafico);
+      dpMetrica.addEventListener("change", actualizarGrafico);
+
+      // Inicialización
+      actualizarDropdowns();
+      actualizarGrafico();
+    });
+  </script>
+</body>
+</html>

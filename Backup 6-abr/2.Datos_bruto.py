@@ -1,0 +1,120 @@
+import requests
+from bs4 import BeautifulSoup
+import json
+import pandas as pd
+import time
+
+# Leer links y metadatos desde el CSV creado previamente
+df_links = pd.read_csv("links_partidos.csv")
+# Deduplicar por seguridad
+df_links = df_links.drop_duplicates(subset=["Link"])
+
+all_stats = []
+partidos_cargados = 0
+invalid_players = 0  # contador de jugadores con player null
+
+for _, row in df_links.iterrows():
+    link = row["Link"]
+    torneo = row.get("Torneo", "sin torneo")
+    categoria = row.get("Categoria", "sin categoria")
+    fecha = row.get("Fecha", "sin fecha")
+    match_id = row["match_id"]
+
+    response = requests.get(link)
+    if response.status_code != 200:
+        print(f"Error al acceder {link}")
+        continue
+
+    soup = BeautifulSoup(response.text, "html.parser")
+    script_tag = soup.find("script", id="__NEXT_DATA__")
+    if not script_tag:
+        print(f"No se encontró JSON en {link}")
+        continue
+
+    data = json.loads(script_tag.string)
+    match = data["props"]["pageProps"]["match"]
+
+    team1 = match.get("team1", {}).get("name", "sin equipo")
+    team2 = match.get("team2", {}).get("name", "sin equipo")
+    date = match.get("date", "sin fecha")
+    location = match.get("location", "sin lugar")
+
+    # Jugadores equipo 1
+    for p in match.get("playersTeam1", []):
+        if not isinstance(p, dict):
+            continue
+        player_info = p.get("player")
+        if player_info is None:
+            invalid_players += 1
+            player_name = "sin nombre"
+            status = "player null"
+        else:
+            player_name = player_info.get("name", "sin nombre")
+            status = "ok"
+
+        stats = {
+            "torneo": torneo,
+            "categoria": categoria,
+            "fecha_fixture": fecha,   # fecha del CSV
+            "match_id": match_id,
+            "date": date,             # fecha del JSON
+            "location": location,
+            "team": team1,
+            "player": player_name,
+            "points": p.get("totalScore", 0),
+            "rebounds": p.get("rebounds", 0),
+            "assists": p.get("assists", 0),
+            "steals": p.get("steals", 0),
+            "fouls": p.get("fouls", 0),
+            "triples": p.get("pt3", 0),
+            "dobles": p.get("pt2", 0),
+            "libres": p.get("pt1", 0),
+            "status": status
+        }
+        all_stats.append(stats)
+
+    # Jugadores equipo 2
+    for p in match.get("playersTeam2", []):
+        if not isinstance(p, dict):
+            continue
+        player_info = p.get("player")
+        if player_info is None:
+            invalid_players += 1
+            player_name = "sin nombre"
+            status = "player null"
+        else:
+            player_name = player_info.get("name", "sin nombre")
+            status = "ok"
+
+        stats = {
+            "torneo": torneo,
+            "categoria": categoria,
+            "fecha_fixture": fecha,
+            "match_id": match_id,
+            "date": date,
+            "location": location,
+            "team": team2,
+            "player": player_name,
+            "points": p.get("totalScore", 0),
+            "rebounds": p.get("rebounds", 0),
+            "assists": p.get("assists", 0),
+            "steals": p.get("steals", 0),
+            "fouls": p.get("fouls", 0),
+            "triples": p.get("pt3", 0),
+            "dobles": p.get("pt2", 0),
+            "libres": p.get("pt1", 0),
+            "status": status
+        }
+        all_stats.append(stats)
+
+    partidos_cargados += 1
+    print(f"Partido {partidos_cargados} cargado: {team1} vs {team2} ({date})")
+
+    time.sleep(1)  # pausa para no sobrecargar el servidor
+
+# Exportar a CSV
+df = pd.DataFrame(all_stats)
+df.to_csv("partidos_stats.csv", index=False, encoding="utf-8")
+
+print(f"CSV generado con estadísticas de {partidos_cargados} partidos.")
+print(f"Se encontraron {invalid_players} jugadores con player null.")
